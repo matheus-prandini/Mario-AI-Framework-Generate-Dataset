@@ -111,8 +111,8 @@ public class MarioGame {
      * @return statistics about the current game
      */
     public MarioResult runGame(ArrayList<Example> examples, MarioAgent agent, String level, int timer, int marioState,
-            boolean visuals) {
-        return this.runGame(examples, agent, level, timer, marioState, visuals, visuals ? 30 : 0, 2);
+            boolean visuals, int xPositionJFrame) {
+        return this.runGame(examples, agent, level, timer, marioState, visuals, visuals ? 30 : 0, 2, xPositionJFrame);
     }
 
     /**
@@ -135,32 +135,33 @@ public class MarioGame {
      * @return statistics about the current game
      */
     public MarioResult runGame(ArrayList<Example> examples, MarioAgent agent, String level, int timer, int marioState,
-            boolean visuals, int fps, float scale) {
+            boolean visuals, int fps, float scale, int xPositionJFrame) {
         if (visuals) {
             this.window = new JFrame("Mario AI Framework");
-            this.render = new MarioRender(scale);
+            this.window.setBounds(xPositionJFrame, 0, 272, 279);
+            this.render = new MarioRender(1);
             this.window.setContentPane(this.render);
             this.window.pack();
             this.window.setResizable(false);
             this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.render.init();
             this.window.setVisible(true);
+
         }
         this.setAgent(agent);
-        return this.gameLoop(examples, level, timer, marioState, visuals, fps, scale);
+        return this.gameLoop(examples, level, timer, marioState, visuals, fps, scale, xPositionJFrame);
     }
 
-    // Matheus
     public void promptEnterKey() {
         System.out.println("Press \"ENTER\" to continue...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
 
-    public BufferedImage captureScreen() {
+    public BufferedImage captureScreen(int xPositionJFrame) {
         try {
-            // Determine current screen size
-            Rectangle oScreen = new Rectangle(8, 30, 512, 512 - 30);
+            // Define current screen size
+            Rectangle oScreen = new Rectangle(8+xPositionJFrame, 30, 272-16, 279 - 22);
 
             // Create screen shot
             Robot robot = new Robot();
@@ -173,10 +174,9 @@ public class MarioGame {
         }
         return null;
     }
-    //
 
     private MarioResult gameLoop(ArrayList<Example> examples, String level, int timer, int marioState, boolean visual,
-            int fps, float scale) {
+            int fps, float scale, int xPositionJFrame) {
         this.world = new MarioWorld(this.killEvents);
         this.world.visuals = visual;
         this.world.initializeLevel(level, 1000 * timer);
@@ -221,7 +221,7 @@ public class MarioGame {
             
             // Get Current Screen Complete Observation (Level and Enemies)
             int[][] currentObservation = new MarioForwardModel(this.world.clone()).getScreenCompleteObservation(0,0);
-            BufferedImage currentImageObservation = captureScreen();
+            BufferedImage currentImageObservation = captureScreen(xPositionJFrame);
 
             // Get Mario Position (x, y) and State (Small, Big or Fire)
             float marioX = (int) this.world.mario.x;

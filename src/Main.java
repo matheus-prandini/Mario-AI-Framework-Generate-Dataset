@@ -8,13 +8,18 @@ import java.util.ArrayList;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import java.nio.charset.StandardCharsets;
+
 import engine.core.MarioAgent;
 import engine.core.MarioGame;
 import engine.core.MarioResult;
 import playerAISystem.Dataset;
 import playerAISystem.Example;
 
-public class GenerateDataset {
+public class Main {
 
     /**
      * Read a certain mario level
@@ -41,7 +46,7 @@ public class GenerateDataset {
      * @param levelName      the name of the mario level
      */
     public static void executeLimitedAgent(String datasetRootDir, String agentName, 
-                                            String levelFullPath, String levelName) {
+                                            String levelFullPath, String levelName, String dataType) {
 
         Dataset dataset = new Dataset(datasetRootDir, agentName, levelName);
         ArrayList<Example> examples = new ArrayList<>();
@@ -55,10 +60,10 @@ public class GenerateDataset {
         else
             agent = new agents.robinBaumgartenEnemyGapBlind.Agent();
 
-        game.runGame(examples, agent, getLevel(levelFullPath), 30, 0, true);
+        game.runGame(examples, agent, getLevel(levelFullPath), 30, 0, true, 0);
 
         dataset.setData(examples);
-        dataset.createData();
+        dataset.createData(dataType);
 
     }
 
@@ -71,7 +76,7 @@ public class GenerateDataset {
      * @param levelsDirName  the full path to the mario levels directory to be
      *                       executed
      */
-    public static void generateAllDatasets(String datasetRootDir, String levelsDirName) throws IOException {
+    public static void generateAllDatasets(String datasetRootDir, String levelsDirName, String dataType) throws IOException {
 
         String levelRootDir = "../levels/" + levelsDirName + "/";
         File f = new File(levelRootDir);
@@ -86,7 +91,7 @@ public class GenerateDataset {
             String levelFullPath = levelRootDir + pathname;
             MarioGame game = new MarioGame();
             MarioResult result = game.runGame(examples, new agents.robinBaumgarten.Agent(), 
-                                                getLevel(levelFullPath), 30, 0, true);
+                                                getLevel(levelFullPath), 30, 0, true, 0);
 
             // If A* wins the level
             if (result.getGameStatus().toString() == "WIN") {
@@ -96,12 +101,55 @@ public class GenerateDataset {
                 // Save A Star data
                 Dataset dataset = new Dataset(datasetRootDir, "Astar", levelName);
                 dataset.setData(examples);
-                dataset.createData();
+                dataset.createData(dataType);
 
                 // Run all limited agents and save their data
-                executeLimitedAgent(datasetRootDir, "AstarNoRun", levelFullPath, levelName);
-                executeLimitedAgent(datasetRootDir, "AstarLimitedJump", levelFullPath, levelName);
-                executeLimitedAgent(datasetRootDir, "AstarEnemyGapBlind", levelFullPath, levelName);
+                executeLimitedAgent(datasetRootDir, "AstarNoRun", levelFullPath, levelName, dataType);
+                executeLimitedAgent(datasetRootDir, "AstarLimitedJump", levelFullPath, levelName, dataType);
+                executeLimitedAgent(datasetRootDir, "AstarEnemyGapBlind", levelFullPath, levelName, dataType);
+            }
+
+            count += 1;
+            System.out.print("\r Processed " + count + " files");
+        }
+    }
+
+        /**
+     * This method iterates over all levels in "levelsDirName". If the A star agent
+     * wins the level, then data regarding its execution and that of all limited
+     * agents will be generated.
+     * 
+     * @param datasetRootDir directory to save the results (dataset)
+     * @param levelsDirName  the full path to the mario levels directory to be
+     *                       executed
+     */
+    public static void startProcess(String datasetRootDir, String levelsDirName, String dataType) throws Exception {
+
+        String levelRootDir = "../levels/" + levelsDirName + "/";
+        File f = new File(levelRootDir);
+        String[] pathnames = f.list();
+        int count = 0;
+
+        datasetRootDir = "../" + datasetRootDir + "/" + levelsDirName + "/";
+
+        for (String pathname : pathnames) {
+
+            String levelFullPath = levelRootDir + pathname;
+
+            JSONObject json = new JSONObject();
+            json.put("levelPathName", pathname);
+            json.put("levelFullPath", levelFullPath);
+            json.put("datasetRootDir", datasetRootDir);
+            json.put("dataType", dataType);
+
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost("localhost");
+            try (Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel()) {
+                channel.queueDeclare("AStarQueue", false, false, false, null);
+                String message = json.toString();
+                channel.basicPublish("", "AStarQueue", null, message.getBytes(StandardCharsets.UTF_8));
+                System.out.println(" [x] Sent '" + message + "'");
             }
 
             count += 1;
@@ -124,7 +172,8 @@ public class GenerateDataset {
             JSONObject jsonObject = (JSONObject) readJson("conf.json");
             String datasetRootDir = String.valueOf(jsonObject.get("datasetRootDir"));
             String levelsDirName = String.valueOf(jsonObject.get("levelsDirName"));
-            generateAllDatasets(datasetRootDir, levelsDirName);
+            String dataType = String.valueOf(jsonObject.get("dataType"));
+            startProcess(datasetRootDir, levelsDirName, dataType);
         } catch (Exception e) {
             e.printStackTrace();
         }
