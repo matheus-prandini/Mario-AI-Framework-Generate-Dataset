@@ -35,10 +35,19 @@ public class Dataset {
     }
     //
 
-    public void createData() {
+    public void createData(String dataType) {
         try {
-            this.createCsv();
-            this.createImages();
+            if (dataType.toLowerCase().equals("csv"))
+                this.createCsv();
+            else if (dataType.toLowerCase().equals("image"))
+                this.createImages();
+            else if (dataType.toLowerCase().equals("both")) {
+                this.createCsv();
+                this.createImages();
+            }
+            else
+                System.out.println("Try one of the following options: 'csv', 'image' or 'both'");
+
         } catch (IOException e) {
             e.printStackTrace();
         }

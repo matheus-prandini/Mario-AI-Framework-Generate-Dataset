@@ -1,5 +1,6 @@
 package agents.robinBaumgartenLimitedJump;
 
+import java.util.Random; 
 import java.util.ArrayList;
 
 import engine.core.MarioForwardModel;
@@ -73,7 +74,20 @@ public class Helper {
     }
 
     public static boolean canJumpHigher(SearchNode node, boolean checkParent) {
-        return node.sceneSnapshot.mayMarioJump() && !node.sceneSnapshot.getMarioCanJumpHigher();
+
+        // Create instance of Random class 
+        Random rand = new Random();
+
+        // Generate random integers in range 0 to 100 
+        int randInt = rand.nextInt(100);
+        
+        if (randInt < 10) {
+            if (node.parentPos != null && checkParent && canJumpHigher(node.parentPos, false))
+                return true;
+            return node.sceneSnapshot.mayMarioJump() || node.sceneSnapshot.getMarioCanJumpHigher();
+        }
+        else
+            return node.sceneSnapshot.mayMarioJump() && !node.sceneSnapshot.getMarioCanJumpHigher();
     }
 
     public static ArrayList<boolean[]> createPossibleActions(SearchNode node) {
