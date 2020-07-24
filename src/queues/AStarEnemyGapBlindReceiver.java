@@ -57,12 +57,17 @@ public class AStarEnemyGapBlindReceiver {
             String datasetRootDir = String.valueOf(jsonObject.get("datasetRootDir"));
             String dataType = String.valueOf(jsonObject.get("dataType"));
 
+            // Show or not execution
+            boolean visual = true;
+            if (dataType.toLowerCase().equals("csv"))
+                visual = false;
+
             // Start A* Enemy/Gap Blind agent on the given level
             ArrayList<Example> examplesAstarEnemyGapBlind = new ArrayList<>();
             MarioGame gameAstarEnemyGapBlind = new MarioGame();
             MarioResult resultAstarEnemyGapBlind = gameAstarEnemyGapBlind.runGame(examplesAstarEnemyGapBlind, 
                                                 new agents.robinBaumgartenEnemyGapBlind.Agent(), 
-                                                getLevel(levelFullPath), 30, 0, true, 900);
+                                                getLevel(levelFullPath), 30, 0, visual, 900);
 
             // Save A* Enemy/Gap Blind data
             Dataset dataset = new Dataset(datasetRootDir, "AStarEnemyGapBlind", levelName);

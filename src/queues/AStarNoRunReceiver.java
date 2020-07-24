@@ -57,12 +57,17 @@ public class AStarNoRunReceiver {
             String datasetRootDir = String.valueOf(jsonObject.get("datasetRootDir"));
             String dataType = String.valueOf(jsonObject.get("dataType"));
 
+            // Show or not execution
+            boolean visual = true;
+            if (dataType.toLowerCase().equals("csv"))
+                visual = false;
+
             // Start A* No Run agent on the given level
             ArrayList<Example> examplesAstarNoRun = new ArrayList<>();
             MarioGame gameAstarNoRun = new MarioGame();
             MarioResult resultAstarNoRun = gameAstarNoRun.runGame(examplesAstarNoRun, 
                                                 new agents.robinBaumgartenNoRun.Agent(), 
-                                                getLevel(levelFullPath), 30, 0, true, 300);
+                                                getLevel(levelFullPath), 30, 0, visual, 300);
 
             // Save A* No Run data
             Dataset dataset = new Dataset(datasetRootDir, "AStarNoRun", levelName);
