@@ -81,11 +81,16 @@ public class AStarReceiver {
             String datasetRootDir = String.valueOf(jsonObject.get("datasetRootDir"));
             String dataType = String.valueOf(jsonObject.get("dataType"));
 
+            // Show or not execution
+            boolean visual = true;
+            if (dataType.toLowerCase().equals("csv"))
+                visual = false;
+
             // Start A* agent on the given level
             ArrayList<Example> examplesAstar = new ArrayList<>();
             MarioGame gameAstar = new MarioGame();
             MarioResult resultAstar = gameAstar.runGame(examplesAstar, new agents.robinBaumgarten.Agent(), 
-                                                getLevel(levelFullPath), 30, 0, true, 0);
+                                                getLevel(levelFullPath), 30, 0, visual, 0);
 
             // If A* wins the level
             if (resultAstar.getGameStatus().toString() == "WIN") {

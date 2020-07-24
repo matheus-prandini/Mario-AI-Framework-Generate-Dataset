@@ -221,7 +221,10 @@ public class MarioGame {
             
             // Get Current Screen Complete Observation (Level and Enemies)
             int[][] currentObservation = new MarioForwardModel(this.world.clone()).getScreenCompleteObservation(0,0);
-            BufferedImage currentImageObservation = captureScreen(xPositionJFrame);
+            
+            BufferedImage currentImageObservation = null;
+            if (visual) 
+                currentImageObservation = captureScreen(xPositionJFrame);
 
             // Get Mario Position (x, y) and State (Small, Big or Fire)
             float marioX = (int) this.world.mario.x;
@@ -277,7 +280,8 @@ public class MarioGame {
 
             i += 1;
         }
-        this.window.dispose();
+        if (visual)
+            this.window.dispose();
         return new MarioResult(this.world, gameEvents, agentEvents);
     }
 }

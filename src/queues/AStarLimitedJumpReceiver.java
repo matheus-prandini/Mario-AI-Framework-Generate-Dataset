@@ -57,12 +57,17 @@ public class AStarLimitedJumpReceiver {
             String datasetRootDir = String.valueOf(jsonObject.get("datasetRootDir"));
             String dataType = String.valueOf(jsonObject.get("dataType"));
 
+            // Show or not execution
+            boolean visual = true;
+            if (dataType.toLowerCase().equals("csv"))
+                visual = false;
+
             // Start A* Limited Jump agent on the given level
             ArrayList<Example> examplesAstarLimitedJump = new ArrayList<>();
             MarioGame gameAstarLimitedJump = new MarioGame();
             MarioResult resultAstarLimitedJump = gameAstarLimitedJump.runGame(examplesAstarLimitedJump, 
                                                 new agents.robinBaumgartenLimitedJump.Agent(), 
-                                                getLevel(levelFullPath), 30, 0, true, 600);
+                                                getLevel(levelFullPath), 30, 0, visual, 600);
 
             // Save A* Limited Jump data
             Dataset dataset = new Dataset(datasetRootDir, "AStarLimitedJump", levelName);
