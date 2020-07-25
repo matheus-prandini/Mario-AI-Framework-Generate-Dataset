@@ -100,3 +100,9 @@ The `conf.json` configuration file has the following structure:
 - datasetRootDir: the name of the directory where the data will be stored.
 - levelsDirName: the name of the directory under "levels/" where the data will be collected.
 - dataType: type of data to be stored.
+
+## Future Improvements
+
+- Increase the number of threads running asynchronously in each agent queue.
+- Implement a queue to only store data.
+- Develop a class with the execution logs.
