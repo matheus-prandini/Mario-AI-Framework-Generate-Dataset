@@ -161,7 +161,7 @@ public class MarioGame {
     public BufferedImage captureScreen(int xPositionJFrame) {
         try {
             // Define current screen size
-            Rectangle oScreen = new Rectangle(8+xPositionJFrame, 30, 272-16, 279 - 22);
+            Rectangle oScreen = new Rectangle(8+xPositionJFrame, 30, 272-15, 279 - 22);
 
             // Create screen shot
             Robot robot = new Robot();
