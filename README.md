@@ -37,6 +37,7 @@ Screenshot of each frame. Size: 256x256.
 
 Java and the following dependencies must be installed to run this project:
 
+[Erlang](https://www.erlang.org/downloads)
 [RabbitMQ](https://www.rabbitmq.com/download.html)
 
 ## Execution - Bots
