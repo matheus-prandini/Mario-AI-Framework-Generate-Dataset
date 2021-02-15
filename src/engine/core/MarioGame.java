@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -150,12 +149,6 @@ public class MarioGame {
         }
         this.setAgent(agent);
         return this.gameLoop(examples, level, timer, marioState, visuals, fps, scale, xPositionJFrame);
-    }
-
-    public void promptEnterKey() {
-        System.out.println("Press \"ENTER\" to continue...");
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
     }
 
     public BufferedImage captureScreen(int xPositionJFrame) {

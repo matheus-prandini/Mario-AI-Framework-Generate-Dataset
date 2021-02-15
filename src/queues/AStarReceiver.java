@@ -92,28 +92,25 @@ public class AStarReceiver {
             MarioResult resultAstar = gameAstar.runGame(examplesAstar, new agents.robinBaumgarten.Agent(), 
                                                 getLevel(levelFullPath), 30, 0, visual, 0);
 
-            // If A* wins the level
-            if (resultAstar.getGameStatus().toString() == "WIN") {
-                String[] levelFile = levelPathName.split("/");
-                String levelName = levelFile[levelFile.length - 1].replace(".txt", "");
+            String[] levelFile = levelPathName.split("/");
+            String levelName = levelFile[levelFile.length - 1].replace(".txt", "");
 
-                // Create Json Object
-                JSONObject json = new JSONObject();
-                json.put("levelName", levelName);
-                json.put("levelFullPath", levelFullPath);
-                json.put("datasetRootDir", datasetRootDir);
-                json.put("dataType", dataType);
+            // Create Json Object
+            JSONObject json = new JSONObject();
+            json.put("levelName", levelName);
+            json.put("levelFullPath", levelFullPath);
+            json.put("datasetRootDir", datasetRootDir);
+            json.put("dataType", dataType);
 
-                // Run all limited agents and save their data
-                sendToQueue("AstarNoRunQueue", json);
-                sendToQueue("AstarLimitedJumpQueue", json);
-                sendToQueue("AstarEnemyGapBlindQueue", json);
+            // Run all limited agents and save their data
+            sendToQueue("AstarNoRunQueue", json);
+            sendToQueue("AstarLimitedJumpQueue", json);
+            sendToQueue("AstarEnemyGapBlindQueue", json);
 
-                // Save A* data
-                Dataset dataset = new Dataset(datasetRootDir, "AStar", levelName);
-                dataset.setData(examplesAstar);
-                dataset.createData(dataType);
-            }
+            // Save A* data
+            Dataset dataset = new Dataset(datasetRootDir, "AStar", levelName);
+            dataset.setData(examplesAstar);
+            dataset.createData(dataType);
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
