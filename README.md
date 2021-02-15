@@ -1,6 +1,6 @@
 # Mario-AI-Framework-Generate-Dataset
 
-This project aims to automate the data generation process in the Super Mario Bros game implemented in the Mario AI Framework. The process has the flow shown below:
+This project aims to automate the data generation process in the Super Mario Bros game implemented in the Mario AI Framework. Data can be collected through human agents or automatic agents. The process concerning automatic agents has the following flow:
 
 <img src="https://github.com/matheusprandini/Mario-AI-Framework-Generate-Dataset/blob/master/readmeImages/DataGenerationProcess.png" alt="alt text" width="600" height="600">
 
@@ -39,7 +39,7 @@ Java and the following dependencies must be installed to run this project:
 
 [RabbitMQ](https://www.rabbitmq.com/download.html)
 
-## Execution
+## Execution - Bots
 
 Run the commands from src/ directory.
 
@@ -85,6 +85,18 @@ java -cp "jars/json-simple-1.1.1.jar;jars/amqp-client-5.7.1.jar;jars/slf4j-api-1
 
 Note: minimize all terminals after running commands.
 
+## Execution - Human Player
+
+Run the commands from src/ directory.
+
+**Terminal 1:**
+
+```
+javac -cp "jars/json-simple-1.1.1.jar;jars/amqp-client-5.7.1.jar;jars/slf4j-api-1.7.26.jar;jars/slf4j-simple-1.7.26.jar;" Main.java
+
+java -cp "jars/json-simple-1.1.1.jar;jars/amqp-client-5.7.1.jar;jars/slf4j-api-1.7.26.jar;jars/slf4j-simple-1.7.26.jar;" Main
+```
+
 ## Configuration
 
 The `conf.json` configuration file has the following structure:
@@ -93,13 +105,18 @@ The `conf.json` configuration file has the following structure:
 {
     "datasetRootDir": "dataset", 
     "levelsDirName": "test",
-    "dataType": "both"
+    "dataType": "both",
+    "mode": "human",
+    "humanPlayerName": "agentName"
+}
 }
 ```
 
 - datasetRootDir: the name of the directory where the data will be stored.
 - levelsDirName: the name of the directory under "levels/" where the data will be collected.
-- dataType: type of data to be stored.
+- dataType: type of data to be stored ("csv", "image", "both").
+- mode: agent(s) playing the game ("human", "bots").
+- humanPlayerName (conditional): required only when "mode" = "human". 
 
 ## Future Improvements
 
