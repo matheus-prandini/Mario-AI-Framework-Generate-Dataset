@@ -24,11 +24,11 @@ public class Assets {
     public static Image[][] particles;
     public static Image[][] font;
     public static Image[][] map;
-    final static String curDir = System.getProperty("user.dir");
-    final static String img = "C:/Users/mathe/Desktop/ProjetoDoutorado/MarioFramework/Mario-AI-Framework/" + "/img/";
+    public static String img;
 
     public static void init(GraphicsConfiguration gc) {
         try {
+            img = new File("").getCanonicalFile().getParent() + "/img/";
             mario = cutImage(gc, "mariosheet.png", 32, 32);
             smallMario = cutImage(gc, "smallmariosheet.png", 16, 16);
             fireMario = cutImage(gc, "firemariosheet.png", 32, 32);
@@ -45,6 +45,7 @@ public class Assets {
 
     private static Image getImage(GraphicsConfiguration gc, String imageName) throws IOException {
         BufferedImage source = null;
+        
         try {
             source = ImageIO.read(Assets.class.getResourceAsStream(imageName));
         } catch (Exception e) {
